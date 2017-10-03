@@ -1,0 +1,7 @@
+# Disable Directory Indexing
+Options -Indexes
+
+# Basically, adding these gives you pretty URL's without index.php
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
