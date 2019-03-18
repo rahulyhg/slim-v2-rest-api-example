@@ -1,12 +1,12 @@
 <?php
 // Autoload Dependencies and classes
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Use RedBean
 use \RedBeanPHP\R as R;
 
 // set up database connection
-R::setup('mysql:host=localhost;dbname=slim','root','');
+R::setup('mysql:host=localhost;dbname=slim', 'root', '');
 R::freeze(true);
 
 // Initialize app
@@ -20,25 +20,29 @@ $app = new \Slim\Slim();
   'id' => '[0-9]{1,}',
 ));
 
-class ResourceNotFoundException extends Exception {}
+class ResourceNotFoundException extends Exception
+{
+}
 
 // Route middleware for simple API authentication
-function authenticate(\Slim\Route $route) {
+function authenticate(\Slim\Route $route)
+{
     $app = \Slim\Slim::getInstance();
     $uid = $app->getEncryptedCookie('uid');
     $key = $app->getEncryptedCookie('key');
     if (validateUserKey($uid, $key) === false) {
-      $app->halt(401);
+        $app->halt(401);
     }
 }
 
-function validateUserKey($uid, $key) {
-  // insert your (hopefully more complex) validation routine here
-  if ($uid == 'demo' && $key == 'demo') {
-    return true;
-  } else {
-    return false;
-  }
+function validateUserKey($uid, $key)
+{
+    // insert your (hopefully more complex) validation routine here
+    if ($uid == 'demo' && $key == 'demo') {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -71,125 +75,125 @@ $app->get('/create-table', function () use ($app) {
  * Call this first to gain access to protected API methods
  */
 $app->get('/demo', function () use ($app) {
-  try {
-    $app->setEncryptedCookie('uid', 'demo', '5 minutes');
-    $app->setEncryptedCookie('key', 'demo', '5 minutes');
-  } catch (Exception $e) {
-    $app->response()->status(400);
-    $app->response()->header('X-Status-Reason', $e->getMessage());
-  }
+    try {
+        $app->setEncryptedCookie('uid', 'demo', '5 minutes');
+        $app->setEncryptedCookie('key', 'demo', '5 minutes');
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
+    }
 });
 
 // Handle GET requests for /articles.
 $app->get('/articles', 'authenticate', function () use ($app) {
-  // query database for all articles
-  $articles = R::find('articles');
+    // query database for all articles
+    $articles = R::find('articles');
 
-  // send response header for JSON content type
-  $app->response()->header('Content-Type', 'application/json');
+    // send response header for JSON content type
+    $app->response()->header('Content-Type', 'application/json');
 
-  // return JSON-encoded response body with query results
-  echo json_encode(R::exportAll($articles));
+    // return JSON-encoded response body with query results
+    echo json_encode(R::exportAll($articles));
 });
 
 // Handle GET requests for /articles/:id
 $app->get('/articles/:id', 'authenticate', function ($id) use ($app) {
-  try {
-    // query database for single article
-    $article = R::findOne('articles', 'id=?', array($id));
+    try {
+        // query database for single article
+        $article = R::findOne('articles', 'id=?', array($id));
 
-    if ($article) {
-      // if found, return JSON response
-      $app->response()->header('Content-Type', 'application/json');
-      echo json_encode(R::exportAll($article));
-    } else {
-      // else throw exception
-      throw new ResourceNotFoundException();
+        if ($article) {
+            // if found, return JSON response
+            $app->response()->header('Content-Type', 'application/json');
+            echo json_encode(R::exportAll($article));
+        } else {
+            // else throw exception
+            throw new ResourceNotFoundException();
+        }
+    } catch (ResourceNotFoundException $e) {
+        // return 404 server error
+        $app->response()->status(404);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
     }
-  } catch (ResourceNotFoundException $e) {
-    // return 404 server error
-    $app->response()->status(404);
-  } catch (Exception $e) {
-    $app->response()->status(400);
-    $app->response()->header('X-Status-Reason', $e->getMessage());
-  }
 });
 
 // Handle POST requests to /articles
 $app->post('/articles', 'authenticate', function () use ($app) {
-  try {
-    // get and decode JSON request body
-    $request = $app->request();
-    $body = $request->getBody();
-    $input = json_decode($body);
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
 
-    // store article record
-    $article = R::dispense('articles');
-    $article->title = (string)$input->title;
-    $article->url = (string)$input->url;
-    $article->date = (string)$input->date;
-    $id = R::store($article);
+        // store article record
+        $article = R::dispense('articles');
+        $article->title = (string)$input->title;
+        $article->url = (string)$input->url;
+        $article->date = (string)$input->date;
+        $id = R::store($article);
 
-    // return JSON-encoded response body
-    $app->response()->header('Content-Type', 'application/json');
-    echo json_encode(R::exportAll($article));
-  } catch (Exception $e) {
-    $app->response()->status(400);
-    $app->response()->header('X-Status-Reason', $e->getMessage());
-  }
+        // return JSON-encoded response body
+        $app->response()->header('Content-Type', 'application/json');
+        echo json_encode(R::exportAll($article));
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
+    }
 });
 
 // Handle PUT requests (Update/Modify) to /articles/:id
 $app->put('/articles/:id', 'authenticate', function ($id) use ($app) {
-  try {
-    // get and decode JSON request body
-    $request = $app->request();
-    $body = $request->getBody();
-    $input = json_decode($body);
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
 
-    // query database for single article
-    $article = R::findOne('articles', 'id=?', array($id));
+        // query database for single article
+        $article = R::findOne('articles', 'id=?', array($id));
 
-    // store modified article
-    // return JSON-encoded response body
-    if ($article) {
-      $article->title = (string)$input->title;
-      $article->url = (string)$input->url;
-      $article->date = (string)$input->date;
-      R::store($article);
-      $app->response()->header('Content-Type', 'application/json');
-      echo json_encode(R::exportAll($article));
-    } else {
-      throw new ResourceNotFoundException();
+        // store modified article
+        // return JSON-encoded response body
+        if ($article) {
+            $article->title = (string)$input->title;
+            $article->url = (string)$input->url;
+            $article->date = (string)$input->date;
+            R::store($article);
+            $app->response()->header('Content-Type', 'application/json');
+            echo json_encode(R::exportAll($article));
+        } else {
+            throw new ResourceNotFoundException();
+        }
+    } catch (ResourceNotFoundException $e) {
+        $app->response()->status(404);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
     }
-  } catch (ResourceNotFoundException $e) {
-    $app->response()->status(404);
-  } catch (Exception $e) {
-    $app->response()->status(400);
-    $app->response()->header('X-Status-Reason', $e->getMessage());
-  }
 });
 
 // Handle DELETE requests to /articles/:id
 $app->delete('/articles/:id', 'authenticate', function ($id) use ($app) {
-  try {
-    // query database for article
-    $request = $app->request();
-    $article = R::findOne('articles', 'id=?', array($id));
+    try {
+        // query database for article
+        $request = $app->request();
+        $article = R::findOne('articles', 'id=?', array($id));
 
-    // delete article
-    if ($article) {
-      R::trash($article);
-      $app->response()->status(204);
-    } else {
-      throw new ResourceNotFoundException();
+        // delete article
+        if ($article) {
+            R::trash($article);
+            $app->response()->status(204);
+        } else {
+            throw new ResourceNotFoundException();
+        }
+    } catch (ResourceNotFoundException $e) {
+        $app->response()->status(404);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
     }
-  } catch (ResourceNotFoundException $e) {
-    $app->response()->status(404);
-  } catch (Exception $e) {
-    $app->response()->status(400);
-    $app->response()->header('X-Status-Reason', $e->getMessage());
-  }
 });
 
 // run

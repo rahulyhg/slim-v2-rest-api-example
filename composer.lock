@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "a67a194438f2e14b77e71b302716a735",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/gabordemooij/redbean.git",
-                "reference": "e3f2025ad62645d320269c61d99796cbc33a243a"
+                "reference": "913c8072a13105d7d702ee88e762796773d212fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/e3f2025ad62645d320269c61d99796cbc33a243a",
-                "reference": "e3f2025ad62645d320269c61d99796cbc33a243a",
+                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/913c8072a13105d7d702ee88e762796773d212fe",
+                "reference": "913c8072a13105d7d702ee88e762796773d212fe",
                 "shasum": ""
             },
             "require": {
@@ -31,21 +31,21 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "New BSD and GPLv2"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
                     "name": "Gabor de Mooij",
                     "email": "gabor@redbeanphp.com",
-                    "homepage": "http://redbeanphp.com"
+                    "homepage": "https://redbeanphp.com"
                 }
             ],
             "description": "RedBeanPHP ORM",
-            "homepage": "http://redbeanphp.com/",
+            "homepage": "https://redbeanphp.com/",
             "keywords": [
                 "orm"
             ],
-            "time": "2017-08-30T22:00:58+00:00"
+            "time": "2019-03-15T09:34:00+00:00"
         },
         {
             "name": "slim/slim",

@@ -7,6 +7,7 @@
 ### Instructions:
 * Copy all contents in XAMPP htdocs/slim
 * Create database `slim` (MySQL/MariaDb)
+* Run `composer install`
 * Run `localhost/slim/create-table`
 * Run `localhost/slim/demo` to authenticate yourself as a demo user for 5 minutes.
 
@@ -15,13 +16,14 @@
 GET localhost/slim/articles
 GET localhost/slim/articles/1
 
-POST localhost/slim/articles 
-{"title":"Le Random Title","url":"http://google.com","date":"2017-03-10"}
+POST localhost/slim/articles
+curl -H 'Cookie: uid=demo; key=demo' -X POST 'http://localhost/slim/articles' -d '{"title":"Le Random Title","url":"http://google.com","date":"2017-03-10"}'
 
 PUT localhost/slim/articles/3
-{"title":"We modified yo!","url":"http://google.com","date":"2017-03-10"}
+curl -H 'Cookie: uid=demo; key=demo' -X PUT 'http://localhost/slim/articles/3' -d '{"title":"We modified yo!","url":"http://google.com","date":"2017-03-10"}'
 
 DELETE localhost/slim/articles/3
+curl -H 'Cookie: uid=demo; key=demo' -X DELETE 'http://localhost/slim/articles/3'
 ```
 
 ### References:
